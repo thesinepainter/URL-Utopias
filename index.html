@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+        <link rel="icon" type="image/png" href="tex/favicon.ico" />
+
+		<title>The Sine Painter - URL Utopias</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+            @font-face {
+                font-family: idFont;
+                src: url(ui/enchantedland.otf);
+            }
+
+			body {
+				background-color: #008080;
+				margin: 0px;
+				overflow: hidden;
+				font-family:sans-serif;				
+			}
+            
+            h2{
+                position: absolute;
+                top: -30px;
+                left: calc(50% - 37px);
+                opacity: 0.5;
+                font-family: idFont;
+                font-size: 45px;
+                color: black;
+                text-shadow: 0 0 5px rgba(255,255,255,1) , 0 0 10px rgba(255,255,255,1) , 0 0 60px rgba(255,255,255,1) , 0 0 40px #ff00de , 0 0 70px #ff00de , 0 0 80px #ff00de , 0 0 100px #ff00de ;
+                -webkit-transition: all 100ms cubic-bezier(0.42, 0, 0.58, 1);
+                -moz-transition: all 100ms cubic-bezier(0.42, 0, 0.58, 1);
+                -o-transition: all 100ms cubic-bezier(0.42, 0, 0.58, 1);
+                transition: all 100ms cubic-bezier(0.42, 0, 0.58, 1);
+            }
+            h2:hover {
+                opacity: 1.0;
+              text-shadow: 0 0 10px rgba(255,255,255,1) , 0 0 20px rgba(255,255,255,1) , 0 0 30px rgba(255,255,255,1) , 0 0 10px #f44 , 0 0 40px #f44 , 0 0 50px #f44 ;
+            }
+            
+			a {
+				color:#222;
+                text-decoration: none;
+                position:absolute;
+                opacity: 0.7;
+                display: block;                
+			}     
+            a:hover{
+                opacity: 1;
+            }
+
+            .fb{
+                top:10px;
+                left: 0.5%;         
+            }
+            
+            .dl{
+                top:10px;
+                left: calc(100% - 80px);                
+            }
+
+            .tour{
+                top:calc(25% - 75px);
+                left:calc(25% - 37px);
+            }
+            
+            .insta{
+                top:calc(25% - 75px);
+                left:calc(75% - 40px);
+            }
+                               
+            .twitter{
+                top:75%;
+                left:calc(25% - 37px);
+            }
+                        
+            .next{
+                top:75%;
+                 left:calc(75% - 40px);
+            }
+                       
+            .play{
+                bottom: 10px;
+                left: 0.5%;
+            }
+            
+            .credits{
+                bottom: 10px;
+                left: calc(50% - 30px);
+            }
+            
+            .sc{
+                bottom: 10px;
+                left: calc(100% - 80px);           
+            }
+            
+		</style>
+        
+        <script src="js/sc-api.js"></script>
+        <script src="js/jquery.min.js"></script>
+        <script>
+            
+            var playToggle = true;
+            var currentSong = -1;
+            var isMobile = false;
+            var track = null;
+            var playlist = null;
+            var finishedTracks = 0;
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(navigator.userAgent)) {
+                isMobile = true;
+            }
+
+           $(document).ready(function() {
+
+                SC.initialize({
+                    client_id: 'ad877fecc7527d59d980232be493f705'
+                });
+                
+                SC.get('/playlists/321578267').then(function(scPlayer) {
+                   
+                    playlist = scPlayer;
+                    console.log(playlist);
+                    
+                    function next(){
+                        
+                        currentSong++;
+           
+                        if(currentSong >= playlist.track_count)
+                        {
+                            currentSong = 0;
+                        }
+                        //console.log("TrackNo : " + currentSong);
+                   
+                        SC.stream("/tracks/" + playlist.tracks[currentSong].id /*, {from: 00, autoLoad: true}*/).then(function(sounds) {
+                            if (sounds.options.protocols[0] === 'rtmp') {
+                                sounds.options.protocols.splice(0, 1);
+                            }
+                            
+                            track = sounds;
+                            //console.log("Track " + currentSong + " :" + playlist.tracks[currentSong].title );
+                            //console.log(track);
+                            track.play();
+                            
+                            $("#TrackID").text(playlist.tracks[currentSong].title);
+                            
+                                                                            
+                            track.on("finish", function(){
+                                finishedTracks++;
+                                if(finishedTracks >= playlist.track_count){
+                                    $("#TrackID").text("The End");                                   
+                                }
+                                else{
+                                      next();                  
+                                }
+                            });
+                            
+                        });
+                    }
+                    
+
+                    $('a.play').click(function(e) {
+                        e.preventDefault();
+                        playToggle = !playToggle;
+                        if (playToggle == true){
+                            //console.log(playlist.tracks[currentSong].title + " " + playToggle);
+                            
+                            track.play();     
+                        }
+                        else{
+                            //console.log(playlist.tracks[currentSong].title + " " + playToggle);
+                            
+                            track.pause();
+                        }                          
+                    });
+                    $('a.next').click(function(e) {
+                        e.preventDefault();
+                        playToggle = true;
+                        next();
+                    });            
+                    
+                    next();
+                });  
+                $('a.credits').click(function(){
+                    alert(":::Credits:::");
+                    alert("Built with three.js : S/O Mr.doob");
+                    alert("Glitch Shader by AlteredQualia");
+                    alert("Emojis by EmojiOne");
+                    alert("Designed and Developed by The Sine Painter");
+                });
+        });
+            
+    </script>
+<!-- RBMH WRAPPER START -->
+<script type="text/javascript">
+
+	var edWrapperNameSpace = {};
+
+	edWrapperNameSpace.aGTM = [
+		"GTM-LVJ5", 	// hq
+		"GTM-7W7M", 	// hq
+		"GTM-HPZK", 	// hq
+		"GTM-59Z4BFL"	// property
+	];		
+	
+	var edWrapper = [];
+
+</script>
+
+<script type="text/javascript">
+
+	edWrapperNameSpace.sVers = -1; 
+	edWrapperNameSpace.aInitialInnerWrapper = [["downloads.redbull.com/webtrekk/innereWrapper/gtm/innerWrapper_gtm.js",false]];
+	edWrapperNameSpace.sWrapperSrc = ["downloads.redbull.com/webtrekk/edAnalyticsWrapper.js","downloads.redbull.com/webtrekk/confWrapper.js"];
+
+	(function (sVarName) {
+		window.edWrapperNameSpace.sEdWrapperObjectName = sVarName; window[sVarName] = window[sVarName] || [];
+		var script = document.createElement('script'); script.type = 'text/javascript'; script.asyn = false; 
+		script.src = ('https:' == document.location.protocol ? 'https://' : 'http://')+edWrapperNameSpace.sWrapperSrc[0] + "?v=" + edWrapperNameSpace.sVers;
+		var script2 = document.getElementsByTagName('script')[0]; script2.parentNode.insertBefore(script, script2);
+	})("edWrapper");
+
+</script>
+<!-- RBMH WRAPPER END -->
+
+
+	</head>
+	<body>
+        <h2 id="TrackID"></h2>
+        
+        <div id="UI">
+                
+            <a class = "fb" href="https://www.facebook.com/thesinepainter" target="_blank">
+                <img src="ui/1.png" alt="facebook" width="75" height="75">
+            </a>
+            <a class = "dl" href="https://thesinepainter.bandcamp.com/" target="_blank">
+            <img src="ui/3.png" alt="twitter" width="75" height="75">
+            </a>
+                    
+            <a id="tourB" class = "tour" href="tourposter/index.html" target="_blank">
+                <img src="ui/4.png" alt="play" width="75" height="75">
+            </a>
+            
+             <a class = "insta" href="https://www.instagram.com/thesinepainter" target="_blank">
+                <img src="ui/6.png" alt="instagram" width="75" height="75"> 
+            </a>
+            
+          
+           <a class = "twitter" href="https://www.twitter.com/thesinepainter" target="_blank">
+                <img src="ui/8.png" alt="twitter" width="75" height="75"> 
+            </a>
+        
+    
+            <a href="#" id="nextB" class="next">
+                <img src="ui/5.png" alt="next" width="75" height="75">
+            </a>        
+            
+            
+            <a href="#" id="credits" class="credits" >
+                <img src="ui/11.png" alt="credits" width="75" height="75">
+            </a>
+            
+            <a href="#" id="playB" class="play" >
+                <img src="ui/2.png" alt="play" width="75" height="75">
+            </a>
+                 
+            <a class = "sc" href="https://www.soundcloud.com/thesinepainter" target="_blank">
+                <img src="ui/7.png" alt="soundcloud" width="75" height="75"> 
+            </a>
+
+        </div>
+                
+	
+		<script src="js/three.min.js"></script>
+
+        <script src="js/shaders/CopyShader.js"></script>
+		<script src="js/shaders/DigitalGlitch.js"></script>
+
+		<script src="js/postprocessing/EffectComposer.js"></script>
+		<script src="js/postprocessing/RenderPass.js"></script>
+		<script src="js/postprocessing/MaskPass.js"></script>
+		<script src="js/postprocessing/ShaderPass.js"></script>
+		<script src="js/postprocessing/GlitchPass2.js"></script>
+		
+        <script src="js/Detector.js"></script>
+        <script src="js/main.js"></script>
+
+
+	</body>
+</html>
