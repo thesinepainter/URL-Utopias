@@ -1,5 +1,5 @@
 # URL-Utopias
-Website of URL Utopias Release
+Website of URL Utopias EP Release
 
 Click Fire Emoji Twice to Start Music Playback and Panda Emoji for Tour Poster
 
