@@ -55,9 +55,10 @@ if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
                 else{
                 // video
 				video = document.createElement( 'video' );
+				video.muted = true;
 				video.loop = true;
 				video.src = "tex/bgn" + FORMAT;
-                video.load();
+               			video.load();
 				video.play();
 
                 texture = new THREE.VideoTexture( video );
